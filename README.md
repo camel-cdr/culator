@@ -38,10 +38,15 @@ $ # Calculate the average line width of FILE
 $ culator "`wc -c README.md | cut -d " " -f1` / `wc -l README.md | cut -d " " -f1`"
 29.1190476190476
 ```
+
+## Install
+```sh
+sudo make clean install
+```
+
 # Licensing
 MIT or public domain, see [LICENSE](LICENSE).
 
 ## References
-
 * Per Vognsen's Bitwise tutorial series [[day 3](https://youtu.be/0woxSWjWsb8)]
 
