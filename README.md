@@ -1,4 +1,4 @@
-# Culator -- A simple infix notation floating-point cli calculator
+# Culator
 
 A simple infix notation floating-point cli calculator supporting:
 
