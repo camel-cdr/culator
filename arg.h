@@ -19,7 +19,6 @@
  *
  * #     options    non options
  * program -a -b -- -x foo bar
- *
  */
 
 #ifndef ARG_H_INCLUDED
@@ -39,7 +38,7 @@ ARG_LONG_func(char **lp, const char *r)
 	return 0;
 }
 
-#define ARG_BEGIN \
+#define ARG_BEGIN do { \
 	for (--argc, ++argv; \
 	     argv[0] && argv[0][0] == '-'; \
 	     --argc, ++argv) { \
@@ -61,7 +60,7 @@ ARG_LONG_func(char **lp, const char *r)
 
 #define ARG_FLAG() if (isFlag && argv[0][1]) goto ARG_BEGIN_REP
 
-#define ARG_END } }
+#define ARG_END } } } while(0)
 
 #define ARG_H_INCLUDED
 #endif
@@ -81,14 +80,15 @@ int main(int argc, char **argv)
 			case 'b': b = 1; ARG_FLAG(); break;
 			case 'c': c = 1; ARG_FLAG(); break;
 			case '\0': readstdin = 1; break;
-		} else if (ARG_LONG("reverse")) { case 'r':
+		} else if (ARG_LONG("reverse")) case 'r': {
 			reverse = 1;
 			ARG_FLAG();
-		} else if (ARG_LONG("input")) { case 'i':
+		} else if (ARG_LONG("input")) case 'i': {
 			input = ARG_VAL();
-		} else if (ARG_LONG("output")) { case 'o':
+		} else if (ARG_LONG("output")) case 'o': {
 			output = ARG_VAL();
-		} else if (ARG_LONG("help")) { case 'h': case '?':
+			break;
+		} else if (ARG_LONG("help")) case 'h': case '?': {
 			puts("help");
 			return EXIT_SUCCESS;
 		} else { default:
