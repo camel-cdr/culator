@@ -1,5 +1,7 @@
+.POSIX:
+
 culator: culator.c functions.c arg.h
-	${CC} $< -o $@  -Wall -Wextra -Os -lm
+	${CC} culator.c -o $@  -Wall -Wextra -Os -lm
 
 install: culator
 	cp -f culator /usr/local/bin/culator

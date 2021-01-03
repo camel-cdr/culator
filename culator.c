@@ -3,6 +3,7 @@
  * By Olaf Bernstein <camel-cdr@protonmail.com>
  */
 
+#define _USE_MATH_DEFINES
 #include <assert.h>
 #include <ctype.h>
 #include <math.h>
