@@ -39,3 +39,4 @@ X(trunc, truncl, 1, (x[0]))
 X(nearbyint, nearbyintl, 1, (x[0]))
 X(copysign, copysignl, 2, (x[0], x[1]))
 #undef X
+

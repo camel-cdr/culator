@@ -1,24 +1,7 @@
-/* arg.h -- A posix complient argument parser based on plan9's arg(3) */
-
-/*
- * program -a -b -c
- * program -abc
- * program --reverse
- *
- * program -i input.txt -o output.txt
- * program -iinput.txt -ooutput.txt
- *
- * program -abco output.txt
- * program -abcooutput.txt
- *
- * program -o -a   # two separate flags
- * program -o-a    # -c with argument "-a"
- *
- * program --output output.txt
- * program --output=output.txt
- *
- * #     options    non options
- * program -a -b -- -x foo bar
+/* arg.h -- A POSIX compliant argument parser based on plan9's arg(3)
+ * Olaf Bernstein <camel-cdr@protonmail.com>
+ * Distributed under the MIT license, see license at the end of the file.
+ * New versions available at https://github.com/camel-cdr/cauldron
  */
 
 #ifndef ARG_H_INCLUDED
@@ -27,12 +10,13 @@
 #include <stdio.h>
 
 static int
-ARG_LONG_func(char **lp, const char *r)
+ARG_LONG_func(char **argv0, const char *name)
 {
-	char *l = *lp;
-	for (; *l == *r && *l; l++, r++);
-	if (*l == *r || (*l == '=' && !*r)) {
-		*lp = l;
+	char *argIt = *argv0;
+	while (*argIt == *name && *argIt)
+		argIt++, name++;
+	if (*argIt == *name || (*argIt == '=' && !*name)) {
+		*argv0 = argIt;
 		return 1;
 	}
 	return 0;
@@ -65,13 +49,18 @@ ARG_LONG_func(char **lp, const char *r)
 #define ARG_H_INCLUDED
 #endif
 
-/* Example */
+/*
+ * Example:
+ */
+
 #ifdef ARG_EXAMPLE
-int main(int argc, char **argv)
+
+int
+main(int argc, char **argv)
 {
 	char *argv0 = argv[0];
 	int a = 0, b = 0, c = 0, reverse;
-	char *input = "default", *output = "default";
+	char const *input = "default", *output = "default";
 	int readstdin = 0;
 
 	ARG_BEGIN {
@@ -87,9 +76,17 @@ int main(int argc, char **argv)
 			input = ARG_VAL();
 		} else if (ARG_LONG("output")) case 'o': {
 			output = ARG_VAL();
-			break;
 		} else if (ARG_LONG("help")) case 'h': case '?': {
-			puts("help");
+			printf("Usage: %s [OPTION...] [STRING...]\n", argv0);
+			puts("Example usage of arg.h\n");
+			puts("Options:");
+			puts("  -a,                set a to true");
+			puts("  -b,                set a to true");
+			puts("  -c,                set a to true");
+			puts("  -r, --reserve      set reserve to true");
+			puts("  -i, --input=STR    set input string to STR");
+			puts("  -o, --output=STR   set output string to STR");
+			puts("  -h, --help         display this help and exit");
 			return EXIT_SUCCESS;
 		} else { default:
 			fprintf(stderr,
@@ -110,49 +107,29 @@ int main(int argc, char **argv)
 
 	puts("\nargv:");
 	while (*argv)
-		puts(*argv++);
+		printf("  %s\n", *argv++);
+
+	return 0;
 }
+
 #endif /* ARG_EXAMPLE */
 
 /*
---------------------------------------------------------------------------------
-This software is available under 2 licenses -- choose whichever you prefer.
---------------------------------------------------------------------------------
-ALTERNATIVE A - MIT License
-Copyright (c) 2020 Olaf Berstein
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
---------------------------------------------------------------------------------
-ALTERNATIVE B - Public Domain
-This is free and unencumbered software released into the public domain.
-Anyone is free to copy, modify, publish, use, compile, sell, or distribute this
-software, either in source code form or as a compiled binary, for any purpose,
-commercial or non-commercial, and by any means.
-In jurisdictions that recognize copyright laws, the author or authors of this
-software dedicate any and all copyright interest in the software to the public
-domain. We make this dedication for the benefit of the public at large and to
-the detriment of our heirs and successors. We intend this dedication to be an
-overt act of relinquishment in perpetuity of all present and future rights to
-this software under copyright law.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-For more information, please refer to <http://unlicense.org/>
---------------------------------------------------------------------------------
-*/
+ * Copyright (c) 2021 Olaf Berstein
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+

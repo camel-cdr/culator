@@ -3,7 +3,6 @@
  * By Olaf Bernstein <camel-cdr@protonmail.com>
  */
 
-#define _USE_MATH_DEFINES
 #include <assert.h>
 #include <ctype.h>
 #include <math.h>
@@ -53,7 +52,7 @@ struct Token {
 #include "functions.c"
 
 /* implement custom functions */
-static real torad(real *x) { return x[0] * M_PI / 180.0L; }
+static real torad(real *x) { return x[0] * 3.141592653589793238462643383279502884L / 180.0L; }
 
 static struct {
 	char *name;
